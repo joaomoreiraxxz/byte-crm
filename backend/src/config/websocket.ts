@@ -3,6 +3,7 @@ import { Server, Socket } from 'socket.io';
 import jwt from 'jsonwebtoken';
 import { env } from './env.js';
 import { redis } from './redis.js';
+import { handleSSHSocket } from '../modules/system/ssh.socket.js';
 
 let io: Server;
 
@@ -98,6 +99,9 @@ export function initWebSocket(httpServer: HttpServer): Server {
       console.log(`[WS] User ${userId} disconnected: ${reason}`);
       redis.srem(`ws:online:${tenantId}`, userId!);
     });
+
+    // ── SSH Terminal ──
+    handleSSHSocket(socket as any);
   });
 
   console.log('[WS] Socket.IO initialized');

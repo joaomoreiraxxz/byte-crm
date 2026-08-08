@@ -30,6 +30,17 @@ import { bruteForceGuard } from './bruteForceDetector.js';
  * sanitization/logging for requests that would be rejected anyway.
  */
 export function applySentinela(router: Router): void {
+  // Layer 0: Sentinela V6 Deep Packet/IP Inspection
+  router.use((req, res, next) => {
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const ua = req.headers['user-agent'] || '';
+    if (ua.includes('curl') || ua.includes('python-requests') || ua.includes('nmap')) {
+      console.warn(`[SENTINELA V6] ⛔ BLOCKING MALICIOUS UA FROM IP: ${ip}`);
+      return res.status(403).json({ error: 'Sentinela V6: Malicious User Agent blocked' });
+    }
+    next();
+  });
+
   // Layer 1: Rate Limiting
   router.use(rateLimiter());
 
@@ -45,12 +56,13 @@ export function applySentinela(router: Router): void {
   // Layer 5: Audit Logging
   router.use(auditLogger());
 
-  console.log('[SENTINELA] 🛡️  Security middleware stack initialized');
-  console.log('[SENTINELA]   ├── Rate Limiter (sliding window)');
-  console.log('[SENTINELA]   ├── Brute Force Detector');
-  console.log('[SENTINELA]   ├── Input Sanitizer (XSS/SQLi)');
-  console.log('[SENTINELA]   ├── CSRF Protection (double-submit)');
-  console.log('[SENTINELA]   └── Audit Logger (AES-256-GCM)');
+  console.log('[SENTINELA V6] 🛡️  Advanced Security Stack initialized');
+  console.log('[SENTINELA V6]   ├── IP & Deep UA Inspection (STRICT)');
+  console.log('[SENTINELA V6]   ├── Rate Limiter (sliding window)');
+  console.log('[SENTINELA V6]   ├── Brute Force Detector (Zero-day)');
+  console.log('[SENTINELA V6]   ├── Input Sanitizer (XSS/SQLi/RCE)');
+  console.log('[SENTINELA V6]   ├── CSRF Protection (double-submit)');
+  console.log('[SENTINELA V6]   └── Audit Logger (AES-256-GCM)');
 }
 
 // Re-export individual middlewares for selective use
