@@ -76,8 +76,8 @@ export function csrfTokenHandler(req: Request, res: Response): void {
   // Set as HttpOnly cookie
   res.cookie(CSRF_COOKIE_NAME, token, {
     httpOnly: true,
-    secure: env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    secure: true,
+    sameSite: 'none',
     maxAge: TOKEN_EXPIRY_MS,
     path: '/',
   });
