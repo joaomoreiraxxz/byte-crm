@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#A5B4FC"/>
+    </linearGradient>
+    <linearGradient id="grad2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#818CF8"/>
+      <stop offset="100%" stop-color="#3730A3"/>
+    </linearGradient>
+    <linearGradient id="grad3" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#C7D2FE"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background glow for the logo -->
+  <circle cx="256" cy="256" r="160" fill="#4F46E5" opacity="0.15" filter="url(#glow)" />
+
+  <!-- The "B" shape constructed with dynamic ribbons -->
+  <!-- Left Pillar -->
+  <path d="M160 120 C 160 100, 180 90, 200 100 L 220 110 C 230 115, 230 125, 230 135 L 230 380 C 230 400, 210 410, 190 400 L 170 390 C 160 385, 160 375, 160 365 Z" fill="url(#grad2)"/>
+  
+  <!-- Top Loop -->
+  <path d="M190 140 C 260 110, 360 120, 370 200 C 380 280, 280 270, 230 250 L 190 230 C 230 240, 290 240, 290 200 C 290 160, 240 160, 190 180 Z" fill="url(#grad1)"/>
+
+  <!-- Bottom Loop -->
+  <path d="M190 250 C 280 220, 400 240, 410 330 C 420 420, 300 420, 230 390 L 190 370 C 240 380, 320 380, 320 330 C 320 280, 250 280, 190 300 Z" fill="url(#grad3)"/>
+</svg>

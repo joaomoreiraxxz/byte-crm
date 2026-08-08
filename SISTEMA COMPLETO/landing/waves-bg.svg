@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <filter id="drop-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="15" stdDeviation="20" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- Base Layer: Darkest Navy -->
+  <rect width="1440" height="900" fill="#0C102A"/>
+
+  <!-- Layer 3: Dark Purple -->
+  <path d="M0,0 L1440,0 L1440,900 C1200,650 950,850 750,800 C500,740 300,850 0,850 Z" fill="#201C53" filter="url(#drop-shadow)"/>
+
+  <!-- Layer 2: Medium Purple -->
+  <path d="M0,0 L1440,0 L1440,550 C1150,450 950,680 700,600 C450,520 200,650 0,650 Z" fill="#586196" filter="url(#drop-shadow)"/>
+
+  <!-- Layer 1 (Front): Light Purple -->
+  <path d="M0,0 L1440,0 L1440,350 C1100,500 850,200 550,250 C250,300 100,180 0,220 Z" fill="#9997C6" filter="url(#drop-shadow)"/>
+</svg>

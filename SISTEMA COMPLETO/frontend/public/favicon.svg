@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="grad-b" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#2563eb" />
+    </linearGradient>
+  </defs>
+  <!-- Background rounded rect -->
+  <rect width="512" height="512" rx="128" fill="url(#grad-b)" />
+  
+  <!-- White sharp "B" -->
+  <path d="M 160 140 L 280 140 C 340 140, 370 170, 370 210 C 370 240, 350 260, 310 270 C 360 280, 390 310, 390 350 C 390 400, 350 430, 280 430 L 160 430 Z" fill="#ffffff" />
+  
+  <!-- Cutouts to make it look like a modern stencil/app icon -->
+  <path d="M 220 195 L 280 195 C 300 195, 310 205, 310 220 C 310 235, 300 245, 280 245 L 220 245 Z" fill="url(#grad-b)" />
+  <path d="M 220 300 L 290 300 C 320 300, 330 315, 330 330 C 330 345, 320 360, 290 360 L 220 360 Z" fill="url(#grad-b)" />
+</svg>

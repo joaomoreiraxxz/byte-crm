@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="blue-grad-1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+    <linearGradient id="blue-grad-2" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#0ea5e9" />
+    </linearGradient>
+    <linearGradient id="blue-grad-3" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1d4ed8" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1440" height="900" fill="#0b1121" />
+
+  <!-- Dots and Crosses elements from the reference -->
+  <!-- Crosses -->
+  <g stroke="#38bdf8" stroke-width="2" stroke-linecap="round" opacity="0.8">
+    <path d="M 430 300 L 450 300 M 440 290 L 440 310" />
+    <path d="M 1010 230 L 1020 230 M 1015 225 L 1015 235" />
+    <path d="M 1330 380 L 1350 380 M 1340 370 L 1340 390" />
+    <path d="M 1080 800 L 1100 800 M 1090 790 L 1090 810" />
+    <path d="M 380 750 L 390 750 M 385 745 L 385 755" stroke="#0ea5e9" />
+  </g>
+
+  <!-- Circles / Rings -->
+  <circle cx="680" cy="560" r="25" fill="none" stroke="#475569" stroke-width="1.5" />
+  <circle cx="1180" cy="60" r="20" fill="none" stroke="#475569" stroke-width="1.5" />
+  <circle cx="80" cy="270" r="25" fill="none" stroke="#1e293b" stroke-width="1.5" />
+
+  <!-- Solid Dots -->
+  <circle cx="850" cy="80" r="15" fill="#3b82f6" opacity="0.8" />
+  <circle cx="1380" cy="690" r="10" fill="#2563eb" opacity="0.8" />
+  <circle cx="670" cy="820" r="8" fill="#38bdf8" opacity="0.8" />
+  <circle cx="40" cy="630" r="12" fill="#06b6d4" opacity="0.8" />
+
+  <!-- Dot Grid Patterns -->
+  <g fill="#334155">
+    <circle cx="40" cy="40" r="3"/><circle cx="60" cy="40" r="3"/><circle cx="80" cy="40" r="3"/><circle cx="100" cy="40" r="3"/><circle cx="120" cy="40" r="3"/>
+    <circle cx="1370" cy="60" r="3"/><circle cx="1370" cy="80" r="3"/><circle cx="1370" cy="100" r="3"/><circle cx="1370" cy="120" r="3"/><circle cx="1370" cy="140" r="3"/>
+    <circle cx="1390" cy="60" r="3"/><circle cx="1390" cy="80" r="3"/><circle cx="1390" cy="100" r="3"/><circle cx="1390" cy="120" r="3"/><circle cx="1390" cy="140" r="3"/>
+  </g>
+  <g fill="#0ea5e9" opacity="0.7">
+    <circle cx="360" cy="450" r="2.5"/><circle cx="360" cy="470" r="2.5"/><circle cx="360" cy="490" r="2.5"/><circle cx="360" cy="510" r="2.5"/><circle cx="360" cy="530" r="2.5"/>
+    <circle cx="1290" cy="800" r="2.5"/><circle cx="1290" cy="820" r="2.5"/><circle cx="1290" cy="840" r="2.5"/><circle cx="1290" cy="860" r="2.5"/><circle cx="1290" cy="880" r="2.5"/>
+  </g>
+
+  <!-- Fluid Shapes -->
+  <g opacity="0.9">
+    <!-- Back light blue wave -->
+    <path d="M 0 0 C 250 50, 350 200, 300 450 C 250 700, 500 650, 800 700 C 1000 730, 1100 850, 1050 900 L 0 900 Z" fill="url(#blue-grad-1)" opacity="0.6"/>
+    
+    <!-- Middle blue wave -->
+    <path d="M 0 50 C 150 100, 250 300, 150 550 C 50 800, 450 700, 700 800 C 900 880, 950 900, 950 900 L 0 900 Z" fill="url(#blue-grad-2)" opacity="0.8"/>
+    
+    <!-- Front dark blue wave -->
+    <path d="M 0 100 C 100 150, 150 350, 50 600 C -50 850, 400 750, 600 900 L 0 900 Z" fill="url(#blue-grad-3)" opacity="0.9"/>
+  </g>
+
+  <!-- Outlined fluid stroke to match the aesthetic -->
+  <path d="M 0 100 C 350 -50, 500 250, 400 500 C 300 750, 650 650, 900 750 C 1100 830, 1050 950, 1050 950" fill="none" stroke="#475569" stroke-width="1" opacity="0.6" />
+</svg>
