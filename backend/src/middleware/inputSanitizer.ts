@@ -82,7 +82,6 @@ export function inputSanitizer() {
       next();
     }
 
-    }
   };
 }
 
