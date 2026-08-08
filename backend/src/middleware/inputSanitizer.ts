@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import xss from 'xss';
+import xss, { IFilterXSSOptions } from 'xss';
 import validator from 'validator';
 
 // SQL injection patterns (common attack vectors)
@@ -17,7 +17,7 @@ const SQL_INJECTION_PATTERNS = [
 ];
 
 // XSS custom whitelist config (strip all potentially dangerous tags)
-const XSS_OPTIONS: xss.IFilterXSSOptions = {
+const XSS_OPTIONS: IFilterXSSOptions = {
   whiteList: {},
   stripIgnoreTag: true,
   stripIgnoreTagBody: ['script', 'style'],
@@ -36,7 +36,7 @@ const XSS_OPTIONS: xss.IFilterXSSOptions = {
  * Applied to all POST, PUT, PATCH request bodies and all query parameters.
  */
 export function inputSanitizer() {
-  return (req: Request, _res: Response, next: NextFunction): void => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     try {
       // Sanitize query parameters
       if (req.query) {
@@ -82,9 +82,6 @@ export function inputSanitizer() {
       next();
     }
 
-    // Need access to res for the 400 response above
-    function res(_status: number) {
-      return _res;
     }
   };
 }

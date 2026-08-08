@@ -80,7 +80,7 @@ export async function register(req: Request, res: Response, next: NextFunction):
     const user = result.rows[0];
 
     // Generate tokens
-    const { accessToken, refreshToken } = generateTokens(user);
+    const { accessToken, refreshToken } = generateTokens(user as any);
 
     // Store refresh token hash
     const refreshHash = sha256(refreshToken);
@@ -162,7 +162,7 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
     await clearFailedLogins(ip, user.id);
 
     // Generate tokens
-    const { accessToken, refreshToken } = generateTokens(user);
+    const { accessToken, refreshToken } = generateTokens(user as any);
 
     // Store refresh token hash and update last login
     const refreshHash = sha256(refreshToken);
@@ -252,7 +252,7 @@ export async function refreshAccessToken(
     }
 
     // Rotate: generate new tokens
-    const tokens = generateTokens(user);
+    const tokens = generateTokens(user as any);
     const newRefreshHash = sha256(tokens.refreshToken);
 
     await query(
@@ -357,13 +357,13 @@ function generateTokens(user: {
   };
 
   const accessToken = jwt.sign(payload, env.JWT_SECRET, {
-    expiresIn: env.JWT_ACCESS_EXPIRY,
+    expiresIn: env.JWT_ACCESS_EXPIRY as any,
     issuer: 'bytecrm',
     audience: 'bytecrm-api',
   });
 
   const refreshToken = jwt.sign(payload, env.JWT_REFRESH_SECRET, {
-    expiresIn: env.JWT_REFRESH_EXPIRY,
+    expiresIn: env.JWT_REFRESH_EXPIRY as any,
     issuer: 'bytecrm',
     audience: 'bytecrm-api',
   });

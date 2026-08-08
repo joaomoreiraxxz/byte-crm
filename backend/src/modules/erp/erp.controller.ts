@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { query, transaction } from '../../../config/database.js';
-import { parsePagination, calcOffset, paginatedResponse, buildOrderBy } from '../../../utils/pagination.js';
-import { ValidationError, NotFoundError } from '../../../utils/errors.js';
+import { query, transaction } from '../../config/database.js';
+import { parsePagination, calcOffset, paginatedResponse, buildOrderBy } from '../../utils/pagination.js';
+import { ValidationError, NotFoundError } from '../../utils/errors.js';
 
 /**
  * List contas a pagar with filters.
@@ -84,7 +84,7 @@ export async function createContaPagar(req: Request, res: Response, next: NextFu
 
     if (totalInstallments && totalInstallments > 1) {
       // Create installments
-      const results = await transaction(async (client) => {
+      const results = await transaction(async (client: any) => {
         const installments = [];
         const baseDate = new Date(dueDate);
 
@@ -152,7 +152,7 @@ export async function payContaPagar(req: Request, res: Response, next: NextFunct
       throw new ValidationError('amountPaid and contaBancariaId are required');
     }
 
-    const result = await transaction(async (client) => {
+    const result = await transaction(async (client: any) => {
       // Get the bill
       const bill = await client.query(
         'SELECT * FROM contas_pagar WHERE id = $1 AND tenant_id = $2 FOR UPDATE',

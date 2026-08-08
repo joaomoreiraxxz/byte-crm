@@ -94,7 +94,7 @@ export function globalErrorHandler(
       error: {
         code: err.code,
         message: err.message,
-        ...(err.details && { details: err.details }),
+        ...(err.details ? { details: err.details } : {}),
       },
     });
     return;

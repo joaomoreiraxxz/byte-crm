@@ -67,7 +67,7 @@ export function auditLogger() {
     };
 
     // Intercept res.end to log after response is sent
-    res.end = function (...args: unknown[]) {
+    res.end = function (this: Response, ...args: unknown[]) {
       responseStatus = responseStatus || res.statusCode;
       const duration = Date.now() - startTime;
 
