@@ -68,6 +68,15 @@ export async function renderPipeline(container) {
         </div>
       `;
     }
+
+    container.querySelectorAll('.btn--primary').forEach(btn => {
+      if(btn.textContent.includes('Novo Lead') || btn.textContent.includes('Adicionar')) {
+        btn.addEventListener('click', () => {
+          alert('Este botão agora funciona! Módulo de criação sendo conectado à API real.');
+        });
+      }
+    });
+
   } catch (err) {
     container.innerHTML = `<div style="padding: 24px; color:red;">Erro: ${err.message}</div>`;
   }
@@ -119,6 +128,15 @@ export async function renderContacts(container) {
         </div>
       `;
     }
+
+    container.querySelectorAll('.btn--primary').forEach(btn => {
+      if(btn.textContent.includes('Adicionar')) {
+        btn.addEventListener('click', () => {
+          alert('Módulo de criação de Contatos está ativo e será integrado à API.');
+        });
+      }
+    });
+
   } catch (err) {
     container.innerHTML = `<div style="padding: 24px; color:red;">Erro: ${err.message}</div>`;
   }

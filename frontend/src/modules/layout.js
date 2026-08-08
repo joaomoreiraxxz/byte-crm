@@ -1,6 +1,6 @@
-import { getState } from '../lib/store.js';
+import { getState, setState } from '../lib/store.js';
 import icon from '../lib/icons.js';
-import { getUnreadCount } from '../lib/notifications.js';
+import { getUnreadCount, toggleNotificationPanel } from '../lib/notifications.js';
 
 export const openedTabs = [];
 export let activeTabId = null;
@@ -19,6 +19,14 @@ const NAV_SECTIONS = [
       { id: 'contacts', route: '/crm/contacts', icon: 'contacts', label: 'Contatos' },
       { id: 'chat', route: '/crm/chat', icon: 'whatsapp', label: 'WhatsApp' },
       { id: 'products', route: '/crm/products', icon: 'products', label: 'Produtos' },
+    ],
+  },
+  {
+    label: 'Produtividade',
+    items: [
+      { id: 'calendar', route: '/calendar', icon: 'calendar', label: 'Agenda' },
+      { id: 'tasks', route: '/tasks', icon: 'check', label: 'Tarefas' },
+      { id: 'notes', route: '/notes', icon: 'edit', label: 'Notas' },
     ],
   },
   {
@@ -42,7 +50,6 @@ const NAV_SECTIONS = [
     label: 'Sistema',
     items: [
       { id: 'team', route: '/team', icon: 'team', label: 'Equipe' },
-      { id: 'calendar', route: '/calendar', icon: 'calendar', label: 'Agenda' },
       { id: 'settings', route: '/settings', icon: 'settings', label: 'Configurações' },
     ],
   },
@@ -69,7 +76,7 @@ export function initLayout() {
     <div class="app-layout" id="app-layout">
       <aside class="sidebar ${collapsed ? 'collapsed' : ''}" id="sidebar">
         <div class="sidebar__brand">
-          <div class="sidebar__logo">B</div>
+          <img src="/favicon.svg" alt="Logo" style="width: 32px; height: 32px;" />
           <span class="sidebar__brand-text">CRM BYTE</span>
         </div>
         <nav class="sidebar__nav" id="sidebar-nav">${navHTML}</nav>
@@ -112,7 +119,7 @@ function renderTopbar() {
             <span id="notif-count">${unread > 99 ? '99+' : unread}</span>
           </span>
         </button>
-        <div class="topbar__user" id="user-menu">
+        <div class="topbar__user" id="user-menu" data-id="settings" data-title="Configurações" data-icon="settings">
           <div class="avatar avatar--sm">${user?.avatarUrl ? `<img src="${user.avatarUrl}" alt="" />` : initials}</div>
           <div>
             <div class="topbar__user-name">${user?.fullName || 'Usuário'}</div>
@@ -126,9 +133,16 @@ function renderTopbar() {
 
 function bindSidebar() {
   document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
-    const collapsed = !getState('sidebarCollapsed');
-    document.getElementById('sidebar')?.classList.toggle('collapsed', collapsed);
-    document.getElementById('app-main')?.classList.toggle('sidebar-collapsed', collapsed);
+    const currentState = getState('sidebarCollapsed') || false;
+    const newState = !currentState;
+    setState('sidebarCollapsed', newState);
+    document.getElementById('sidebar')?.classList.toggle('collapsed', newState);
+    document.getElementById('app-main')?.classList.toggle('sidebar-collapsed', newState);
+  });
+
+  document.getElementById('notifications-btn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleNotificationPanel();
   });
 }
 
@@ -249,6 +263,13 @@ export function bindSidebarNav(routeMap) {
       if (routeMap[id]) {
         openTab(id, title, iconName, routeMap[id]);
       }
+    }
+  });
+
+  // Topbar user menu opens settings tab
+  document.getElementById('user-menu')?.addEventListener('click', () => {
+    if (routeMap['settings']) {
+      openTab('settings', 'Configurações', 'settings', routeMap['settings']);
     }
   });
 

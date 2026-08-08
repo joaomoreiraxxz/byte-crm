@@ -19,6 +19,8 @@ const routeMap = {
   'contacts': renderContacts,
   'chat': (pane) => { pane.innerHTML = '<div style="padding:48px; text-align:center;">Módulo de WhatsApp em construção...</div>'; },
   'products': (pane) => { pane.innerHTML = '<div style="padding:48px; text-align:center;">Módulo de Produtos em construção...</div>'; },
+  'tasks': (pane) => { pane.innerHTML = '<div style="padding:48px; text-align:center;">Módulo de Tarefas em construção...</div>'; },
+  'notes': (pane) => { pane.innerHTML = '<div style="padding:48px; text-align:center;">Módulo de Notas em construção...</div>'; },
   'contas-pagar': renderContasPagar,
   'contas-receber': renderContasReceber,
   'conciliacao': renderConciliacao,
@@ -53,6 +55,7 @@ route('/dashboard', () => handleDashboardEntry());
 // everything goes through /dashboard and opens dynamically.
 const subRoutes = [
   '/crm/pipeline', '/crm/contacts', '/crm/chat', '/crm/products',
+  '/tasks', '/notes',
   '/erp/contas-pagar', '/erp/contas-receber', '/erp/conciliacao', '/erp/reports',
   '/vault', '/audit', '/terminal', '/team', '/calendar', '/settings'
 ];
