@@ -109,15 +109,13 @@ async function bootstrap(): Promise<void> {
   // Database
   const dbConnected = await checkConnection();
   if (!dbConnected) {
-    console.error('FATAL: Cannot connect to PostgreSQL');
-    process.exit(1);
+    console.error('ERROR: Cannot connect to PostgreSQL. The app will stay alive but API calls will fail.');
   }
 
   // Redis
   const redisConnected = await checkRedisConnection();
   if (!redisConnected) {
-    console.error('FATAL: Cannot connect to Redis');
-    process.exit(1);
+    console.error('ERROR: Cannot connect to Redis. The app will stay alive but caching/sessions will fail.');
   }
 
   // WebSocket
