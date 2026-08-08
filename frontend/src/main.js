@@ -11,16 +11,20 @@ import { renderPipeline, renderContacts } from './modules/crm.js';
 import { renderContasPagar, renderContasReceber, renderConciliacao, renderReports } from './modules/erp.js';
 import { renderVault, renderAudit, renderTeam, renderSettings } from './modules/system.js';
 import { renderTerminal } from './modules/terminal.js';
+import { renderWorkspaces } from './modules/workspaces.js';
+import { renderProductivity } from './modules/productivity.js';
 
 // Route Map for Sidebar
 const routeMap = {
   'dashboard': renderDashboard,
+  'workspaces': renderWorkspaces,
   'pipeline': renderPipeline,
   'contacts': renderContacts,
-  'chat': (pane) => { pane.innerHTML = '<div style="padding:48px; text-align:center;">Módulo de WhatsApp em construção...</div>'; },
+  'tasks': (pane) => renderProductivity(pane, 'tasks'),
+  'notes': (pane) => renderProductivity(pane, 'notes'),
+  'calendar': (pane) => renderProductivity(pane, 'events'),
+  'chat': (pane) => { pane.innerHTML = '<div style="padding:48px; text-align:center;">Módulo de WhatsApp (Evolution API) em construção...</div>'; },
   'products': (pane) => { pane.innerHTML = '<div style="padding:48px; text-align:center;">Módulo de Produtos em construção...</div>'; },
-  'tasks': (pane) => { pane.innerHTML = '<div style="padding:48px; text-align:center;">Módulo de Tarefas em construção...</div>'; },
-  'notes': (pane) => { pane.innerHTML = '<div style="padding:48px; text-align:center;">Módulo de Notas em construção...</div>'; },
   'contas-pagar': renderContasPagar,
   'contas-receber': renderContasReceber,
   'conciliacao': renderConciliacao,
@@ -40,7 +44,7 @@ function handleDashboardEntry() {
   
   // Default tab when logging in
   import('./modules/layout.js').then(({ openTab }) => {
-    openTab('dashboard', 'Dashboard', 'dashboard', renderDashboard);
+    openTab('workspaces', 'Workspaces', 'team', renderWorkspaces);
   });
 }
 

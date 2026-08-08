@@ -19,6 +19,21 @@ Este documento registra as alterações e implementações feitas no projeto, co
 - **O que foi feito:**
   - Criação do `Dockerfile` na pasta `/landing` para permitir o deploy correto via EasyPanel.
 - **Arquivos mudados:**
-  - `SISTEMA COMPLETO/landing/Dockerfile`
+- `SISTEMA COMPLETO/landing/Dockerfile`
   - `docs/manutencao.md`
 - **Código novo:** Configuração do Dockerfile utilizando a imagem `nginx:alpine` para servir os ativos estáticos e expor a porta 80.
+
+## Atualização - Arquitetura Multi-Workspace & Evolution API
+- **O que foi feito:**
+  - Criação da tabela `workspaces` e injeção do conceito Multi-Workspace.
+  - Tabelas de CRM (`pipelines`, `leads`) migradas para pertencerem a um Workspace.
+  - Implementação das tabelas de Produtividade (`tasks`, `notes`, `calendar_events`).
+  - Terminal SSH (root) corrigido (Erros no escape e conexões socket sem host caíam silenciosamente, adicionado logs robustos).
+  - Rotas de Evolution API preparadas via Webhook em `whatsapp.routes.ts`.
+  - Frontend remodelado: Telas de Workspace, Novo Lead, Tarefas, Notas e Calendário integradas com a API.
+  - Nova Logo Criativa ("Ondas / Waves") desenhada em SVG avançado, substituindo o antigo favicon.
+- **Arquivos mudados:**
+  - Diversos no backend (`server.ts`, `api.js`, `crm/leads.controller.ts`, etc).
+  - Novas tabelas na DB (`008_create_workspaces.sql`).
+  - Módulos UI: `workspaces.js`, `productivity.js`, `layout.js`, `main.js`.
+- **Código novo:** Integração total do frontend com o Backend consumindo a API com suporte a multiplos Workspaces via Header (`X-Workspace-Id`).

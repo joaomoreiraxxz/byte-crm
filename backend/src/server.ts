@@ -19,6 +19,7 @@ import leadsRoutes from './modules/crm/leads/leads.routes.js';
 import whatsappRoutes from './modules/crm/whatsapp/whatsapp.routes.js';
 import erpRoutes from './modules/erp/erp.routes.js';
 import vaultRoutes from './modules/banco/vault.routes.js';
+import workspacesRoutes from './modules/workspaces/workspaces.routes.js';
 
 async function bootstrap(): Promise<void> {
   const app = express();
@@ -86,6 +87,7 @@ async function bootstrap(): Promise<void> {
   apiRouter.use('/', whatsappRoutes);         // /webhooks/evolution + /whatsapp/*
   apiRouter.use('/erp', erpRoutes);
   apiRouter.use('/vault', vaultRoutes);
+  apiRouter.use('/workspaces', workspacesRoutes);
 
   // Prefix all API routes with /api/v1
   app.use('/api/v1', apiRouter);

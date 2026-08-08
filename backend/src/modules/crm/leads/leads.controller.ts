@@ -10,13 +10,19 @@ import { NotFoundError, ValidationError } from '../../../utils/errors.js';
 export async function listLeads(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const tenantId = req.tenantId!;
+    const workspaceId = req.headers['x-workspace-id'];
+    
+    if (!workspaceId) {
+      throw new ValidationError('Header X-Workspace-Id is required for CRM routes');
+    }
+
     const pagination = parsePagination(req.query as Record<string, string>);
     const offset = calcOffset(pagination.page, pagination.limit);
 
     // Build dynamic WHERE clause from query params
-    const conditions: string[] = ['l.tenant_id = $1'];
-    const params: unknown[] = [tenantId];
-    let paramIdx = 2;
+    const conditions: string[] = ['l.tenant_id = $1', 'l.workspace_id = $2'];
+    const params: unknown[] = [tenantId, workspaceId];
+    let paramIdx = 3;
 
     if (req.query.stageId) {
       conditions.push(`l.stage_id = $${paramIdx++}`);
@@ -126,6 +132,12 @@ export async function getLead(req: Request, res: Response, next: NextFunction): 
 export async function createLead(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const tenantId = req.tenantId!;
+    const workspaceId = req.headers['x-workspace-id'];
+    
+    if (!workspaceId) {
+      throw new ValidationError('Header X-Workspace-Id is required');
+    }
+
     const {
       pipelineId, stageId, assignedTo, name, email, phone,
       whatsappJid, company, positionTitle, value, probability,
@@ -145,13 +157,13 @@ export async function createLead(req: Request, res: Response, next: NextFunction
 
     const result = await query(
       `INSERT INTO leads (
-        tenant_id, pipeline_id, stage_id, assigned_to, name, email, phone,
+        tenant_id, workspace_id, pipeline_id, stage_id, assigned_to, name, email, phone,
         whatsapp_jid, company, position_title, value, probability,
         expected_close_date, position, source, tags, custom_fields, notes
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)
       RETURNING *`,
       [
-        tenantId, pipelineId, stageId, assignedTo || null, name,
+        tenantId, workspaceId, pipelineId, stageId, assignedTo || null, name,
         email || null, phone || null, whatsappJid || null,
         company || null, positionTitle || null, value || 0,
         probability || 50, expectedCloseDate || null, position,
@@ -305,6 +317,11 @@ export async function getKanbanBoard(req: Request, res: Response, next: NextFunc
   try {
     const { pipelineId } = req.params;
     const tenantId = req.tenantId!;
+    const workspaceId = req.headers['x-workspace-id'];
+    
+    if (!workspaceId) {
+      throw new ValidationError('Header X-Workspace-Id is required');
+    }
 
     // Get stages
     const stages = await query(
@@ -320,10 +337,10 @@ export async function getKanbanBoard(req: Request, res: Response, next: NextFunc
               (SELECT COUNT(*) FROM whatsapp_messages wm WHERE wm.lead_id = l.id) as messages_count
        FROM leads l
        LEFT JOIN users u ON u.id = l.assigned_to
-       WHERE l.pipeline_id = $1 AND l.tenant_id = $2
+       WHERE l.pipeline_id = $1 AND l.tenant_id = $2 AND l.workspace_id = $3
          AND l.won_at IS NULL AND l.lost_at IS NULL
        ORDER BY l.position ASC`,
-      [pipelineId, tenantId]
+      [pipelineId, tenantId, workspaceId]
     );
 
     // Group leads by stage

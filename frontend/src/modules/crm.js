@@ -72,7 +72,68 @@ export async function renderPipeline(container) {
     container.querySelectorAll('.btn--primary').forEach(btn => {
       if(btn.textContent.includes('Novo Lead') || btn.textContent.includes('Adicionar')) {
         btn.addEventListener('click', () => {
-          alert('Este botão agora funciona! Módulo de criação sendo conectado à API real.');
+          const ws = import('./store.js').then(({ getState }) => {
+            const active = getState('activeWorkspace');
+            if(!active) return alert('Selecione um Workspace primeiro na aba Workspaces.');
+            
+            // Build modal
+            const modal = document.createElement('div');
+            modal.style.position = 'fixed';
+            modal.style.inset = '0';
+            modal.style.background = 'rgba(0,0,0,0.8)';
+            modal.style.zIndex = '9999';
+            modal.style.display = 'flex';
+            modal.style.alignItems = 'center';
+            modal.style.justifyContent = 'center';
+            
+            modal.innerHTML = `
+              <div class="card" style="width: 400px; padding: 24px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px;">
+                <h3 style="margin-bottom: 16px;">Criar Novo Lead</h3>
+                <form id="new-lead-form">
+                  <div class="input-group" style="margin-bottom: 12px;">
+                    <label class="input-label">Nome do Lead</label>
+                    <input type="text" id="lead-name" class="input" required />
+                  </div>
+                  <div class="input-group" style="margin-bottom: 12px;">
+                    <label class="input-label">Pipeline ID (Temporário)</label>
+                    <input type="text" id="lead-pipeline" class="input" required placeholder="UUID do Funil" />
+                  </div>
+                  <div class="input-group" style="margin-bottom: 12px;">
+                    <label class="input-label">Stage ID (Temporário)</label>
+                    <input type="text" id="lead-stage" class="input" required placeholder="UUID do Estágio" />
+                  </div>
+                  <div class="input-group" style="margin-bottom: 12px;">
+                    <label class="input-label">Telefone (WhatsApp)</label>
+                    <input type="text" id="lead-phone" class="input" />
+                  </div>
+                  <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end;">
+                    <button type="button" class="btn btn--secondary" id="btn-cancel-lead">Cancelar</button>
+                    <button type="submit" class="btn btn--primary">Salvar Lead</button>
+                  </div>
+                </form>
+              </div>
+            `;
+            document.body.appendChild(modal);
+
+            modal.querySelector('#btn-cancel-lead').addEventListener('click', () => modal.remove());
+            
+            modal.querySelector('#new-lead-form').addEventListener('submit', async (e) => {
+              e.preventDefault();
+              const name = modal.querySelector('#lead-name').value;
+              const pipelineId = modal.querySelector('#lead-pipeline').value;
+              const stageId = modal.querySelector('#lead-stage').value;
+              const phone = modal.querySelector('#lead-phone').value;
+              
+              try {
+                await api.crm.createLead({ name, pipelineId, stageId, phone, workspaceId: active.id });
+                alert('Lead criado com sucesso!');
+                modal.remove();
+                renderPipeline(container);
+              } catch (err) {
+                alert('Erro ao criar lead: ' + err.message);
+              }
+            });
+          });
         });
       }
     });

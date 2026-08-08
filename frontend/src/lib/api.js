@@ -107,6 +107,14 @@ async function request(method, path, body = null, options = {}) {
     headers['X-Vault-Session'] = options.vaultSession;
   }
 
+  try {
+    const { getState } = await import('./store.js');
+    const ws = getState('activeWorkspace');
+    if (ws && ws.id) {
+      headers['X-Workspace-Id'] = ws.id;
+    }
+  } catch (e) {}
+
   const config = {
     method,
     headers,

@@ -61,7 +61,7 @@ export function renderTerminal(container) {
   const btn = container.querySelector('#ssh-connect-btn');
   btn.addEventListener('click', () => {
     if (!socket) {
-      term.writeln('\\x1b[31mErro: WebSocket não conectado\\x1b[0m');
+      term.writeln('\x1b[31mErro: WebSocket não conectado\x1b[0m');
       return;
     }
 
@@ -71,7 +71,7 @@ export function renderTerminal(container) {
     const password = container.querySelector('#ssh-pass').value;
 
     if (!host || !username || !password) {
-      term.writeln('\\x1b[33mPreencha todos os campos para conectar.\\x1b[0m');
+      term.writeln('\x1b[33mPreencha todos os campos para conectar.\x1b[0m');
       return;
     }
 
@@ -91,7 +91,7 @@ export function renderTerminal(container) {
     });
 
     socket.on('ssh:error', (err) => {
-      term.writeln(`\r\n\\x1b[31m[ERRO] ${err}\\x1b[0m\r\n`);
+      term.writeln(`\r\n\x1b[31m[ERRO] ${err}\x1b[0m\r\n`);
     });
 
     term.onData(data => {

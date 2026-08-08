@@ -7,17 +7,26 @@ export let activeTabId = null;
 
 const NAV_SECTIONS = [
   {
-    label: 'Principal',
+    label: 'Empresa',
     items: [
-      { id: 'dashboard', route: '/dashboard', icon: 'dashboard', label: 'Dashboard' },
+      { id: 'dashboard', route: '/dashboard', icon: 'dashboard', label: 'Dashboard Corporativo' },
+      { id: 'workspaces', route: '/workspaces', icon: 'team', label: 'Workspaces' },
     ],
   },
   {
-    label: 'CRM',
+    label: 'Workspace Atual',
     items: [
-      { id: 'pipeline', route: '/crm/pipeline', icon: 'pipeline', label: 'Pipeline' },
-      { id: 'contacts', route: '/crm/contacts', icon: 'contacts', label: 'Contatos' },
-      { id: 'chat', route: '/crm/chat', icon: 'whatsapp', label: 'WhatsApp' },
+      { id: 'pipeline', route: '/pipeline', icon: 'pipeline', label: 'Funil de Vendas' },
+      { id: 'contacts', route: '/contacts', icon: 'contacts', label: 'Contatos' },
+      { id: 'tasks', route: '/tasks', icon: 'check', label: 'Tarefas' },
+      { id: 'notes', route: '/notes', icon: 'edit', label: 'Notas' },
+      { id: 'calendar', route: '/calendar', icon: 'calendar', label: 'Agenda' },
+      { id: 'chat', route: '/chat', icon: 'chat', label: 'WhatsApp' },
+    ],
+  },
+  {
+    label: 'CRM & Produtos',
+    items: [
       { id: 'products', route: '/crm/products', icon: 'products', label: 'Produtos' },
     ],
   },
