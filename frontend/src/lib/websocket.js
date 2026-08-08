@@ -10,6 +10,8 @@ import { setState, getState } from './store.js';
 let socket = null;
 const eventHandlers = new Map();
 
+export const getSocket = () => socket;
+
 /**
  * Connect to the WebSocket server.
  */
