@@ -3,7 +3,7 @@
  * Wraps fetch with auth headers, CSRF tokens, error handling, and retry logic.
  */
 
-const API_BASE = '/api/v1';
+const API_BASE = import.meta.env.VITE_API_URL || '/api/v1';
 
 let accessToken = null;
 let refreshToken = null;
