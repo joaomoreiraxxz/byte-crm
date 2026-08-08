@@ -129,6 +129,20 @@ async function bootstrap(): Promise<void> {
           console.log('All migrations completed successfully!');
         }
       }
+      
+      // Auto-seed admin user if empty
+      const usersCheck = await (await import('./config/database.js')).pool.query("SELECT COUNT(*) as count FROM users");
+      if (parseInt(usersCheck.rows[0].count) === 0) {
+        console.log('Seeding initial admin user...');
+        const bcrypt = await import('bcrypt');
+        const hash = await bcrypt.default.hash('SenhaSegura123!', 10);
+        const tRes = await (await import('./config/database.js')).pool.query("INSERT INTO tenants (name, slug, max_users, plan) VALUES ('Byte Force', 'byte-force', 50, 'enterprise') RETURNING id");
+        await (await import('./config/database.js')).pool.query(
+          "INSERT INTO users (tenant_id, email, password_hash, full_name, role) VALUES ($1, $2, $3, $4, 'owner')",
+          [tRes.rows[0].id, 'moreiraxxz10@gmail.com', hash, 'Administrador']
+        );
+        console.log('Initial admin user created successfully! (byte-force / moreiraxxz10@gmail.com)');
+      }
     } catch (e: any) {
       console.error('Auto-migration failed:', e.message);
     }
