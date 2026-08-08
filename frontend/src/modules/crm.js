@@ -72,7 +72,7 @@ export async function renderPipeline(container) {
     container.querySelectorAll('.btn--primary').forEach(btn => {
       if(btn.textContent.includes('Novo Lead') || btn.textContent.includes('Adicionar')) {
         btn.addEventListener('click', () => {
-          const ws = import('./store.js').then(({ getState }) => {
+          const ws = import('../lib/store.js').then(({ getState }) => {
             const active = getState('activeWorkspace');
             if(!active) return alert('Selecione um Workspace primeiro na aba Workspaces.');
             

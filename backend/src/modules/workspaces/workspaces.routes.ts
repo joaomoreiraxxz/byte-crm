@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAuth } from '../../middleware/auth.js';
+import { authGuard as requireAuth } from '../../middleware/authGuard.js';
 import { listWorkspaces, createWorkspace, getWorkspace } from './workspaces.controller.js';
 
 import { listTasks, createTask, listNotes, createNote, listEvents, createEvent } from './productivity.controller.js';

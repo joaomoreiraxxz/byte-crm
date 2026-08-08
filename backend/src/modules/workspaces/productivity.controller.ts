@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { query } from '../../../config/database.js';
-import { ValidationError } from '../../../utils/errors.js';
+import { query } from '../../config/database.js';
+import { ValidationError } from '../../utils/errors.js';
 
 export async function listTasks(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {

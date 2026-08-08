@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { query } from '../../../config/database.js';
-import { NotFoundError, ValidationError } from '../../../utils/errors.js';
+import { query } from '../../config/database.js';
+import { NotFoundError, ValidationError } from '../../utils/errors.js';
 
 export async function listWorkspaces(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
