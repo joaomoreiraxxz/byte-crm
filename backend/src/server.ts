@@ -110,6 +110,28 @@ async function bootstrap(): Promise<void> {
   const dbConnected = await checkConnection();
   if (!dbConnected) {
     console.error('ERROR: Cannot connect to PostgreSQL. The app will stay alive but API calls will fail.');
+  } else {
+    // Auto-migrate if database is empty
+    try {
+      const fs = await import('fs');
+      const path = await import('path');
+      const migrationsDir = path.join(process.cwd(), 'migrations');
+      if (fs.existsSync(migrationsDir)) {
+        const check = await (await import('./config/database.js')).pool.query("SELECT to_regclass('public.tenants') as exists");
+        if (!check.rows[0].exists) {
+          console.log('Running automatic database migrations...');
+          const files = fs.readdirSync(migrationsDir).filter(f => f.endsWith('.sql')).sort();
+          for (const file of files) {
+            console.log(`Executing ${file}...`);
+            const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8');
+            await (await import('./config/database.js')).pool.query(sql);
+          }
+          console.log('All migrations completed successfully!');
+        }
+      }
+    } catch (e: any) {
+      console.error('Auto-migration failed:', e.message);
+    }
   }
 
   // Redis

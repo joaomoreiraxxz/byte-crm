@@ -165,44 +165,48 @@ async function triggerBruteForceAlert(
  */
 export function bruteForceGuard() {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    // Only apply to login endpoints
-    if (!req.path.includes('/login') && !req.path.includes('/vault/unlock')) {
-      return next();
-    }
+    try {
+      // Only apply to login endpoints
+      if (!req.path.includes('/login') && !req.path.includes('/vault/unlock')) {
+        return next();
+      }
 
-    const ip = getClientIp(req);
-    const email = req.body?.email;
+      const ip = getClientIp(req);
+      const email = req.body?.email;
 
-    // Check IP lockout
-    if (await isLockedOut(ip)) {
-      res.status(423).json({
-        success: false,
-        error: {
-          code: 'ACCOUNT_LOCKED',
-          message: `Account temporarily locked due to multiple failed login attempts. Try again in ${env.BRUTE_FORCE_LOCKOUT_MINUTES} minutes.`,
-        },
-      });
-      return;
-    }
-
-    // If email provided, check user lockout
-    if (email) {
-      const result = await query(
-        'SELECT id, locked_until FROM users WHERE email = $1 AND locked_until > NOW() LIMIT 1',
-        [email]
-      );
-      if (result.rows.length > 0) {
+      // Check IP lockout
+      if (await isLockedOut(ip)) {
         res.status(423).json({
           success: false,
           error: {
             code: 'ACCOUNT_LOCKED',
-            message: 'Account temporarily locked. Try again later.',
+            message: `Account temporarily locked due to multiple failed login attempts. Try again in ${env.BRUTE_FORCE_LOCKOUT_MINUTES} minutes.`,
           },
         });
         return;
       }
-    }
 
-    next();
+      // If email provided, check user lockout
+      if (email) {
+        const result = await query(
+          'SELECT id, locked_until FROM users WHERE email = $1 AND locked_until > NOW() LIMIT 1',
+          [email]
+        );
+        if (result.rows.length > 0) {
+          res.status(423).json({
+            success: false,
+            error: {
+              code: 'ACCOUNT_LOCKED',
+              message: 'Account temporarily locked. Try again later.',
+            },
+          });
+          return;
+        }
+      }
+
+      next();
+    } catch (error) {
+      next(error);
+    }
   };
 }

@@ -13,6 +13,7 @@ RUN addgroup -g 1001 -S nodejs && adduser -S bytecrm -u 1001
 COPY --from=builder --chown=bytecrm:nodejs /app/dist ./dist
 COPY --from=builder --chown=bytecrm:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=bytecrm:nodejs /app/package.json ./
+COPY --from=builder --chown=bytecrm:nodejs /app/src/database/migrations ./migrations
 
 USER bytecrm
 EXPOSE 3000
