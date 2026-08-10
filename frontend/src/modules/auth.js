@@ -3,7 +3,6 @@ import { setState } from '../lib/store.js';
 import { connectWebSocket } from '../lib/websocket.js';
 import icon from '../lib/icons.js';
 import { navigate } from '../lib/router.js';
-import { showToast } from '../lib/websocket.js';
 
 export function renderLogin() {
   const app = document.getElementById('app');

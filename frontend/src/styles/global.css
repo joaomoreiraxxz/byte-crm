@@ -296,6 +296,11 @@
   border-left: 3px solid var(--color-accent);
 }
 
+.toast--success { border-left-color: var(--color-success); }
+.toast--error { border-left-color: var(--color-danger); }
+.toast--warning { border-left-color: var(--color-warning); }
+.toast--info { border-left-color: var(--color-accent); }
+
 /* ═══ NOTIFICATION PANEL ═════════════════════════════════════ */
 
 .notif-panel {

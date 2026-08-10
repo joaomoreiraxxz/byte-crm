@@ -367,3 +367,78 @@ export async function getKanbanBoard(req: Request, res: Response, next: NextFunc
     next(error);
   }
 }
+
+/**
+ * Add a note/activity to a lead.
+ * POST /api/v1/crm/leads/:id/notes
+ */
+export async function addLeadNote(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { id } = req.params;
+    const userId = req.userId!;
+    const tenantId = req.tenantId!;
+
+    const { title, description, type } = req.body;
+
+    if (!title) {
+      throw new ValidationError('Title is required');
+    }
+
+    // Verify lead exists
+    const leadCheck = await query(
+      'SELECT id FROM leads WHERE id = $1 AND tenant_id = $2',
+      [id, tenantId]
+    );
+    if (leadCheck.rows.length === 0) {
+      throw new NotFoundError('Lead', id);
+    }
+
+    const result = await query(
+      `INSERT INTO lead_activities (lead_id, user_id, type, title, description)
+       VALUES ($1, $2, $3, $4, $5)
+       RETURNING *`,
+      [id, userId, type || 'note', title, description || null]
+    );
+
+    // Update last_activity_at
+    await query('UPDATE leads SET last_activity_at = NOW() WHERE id = $1', [id]);
+
+    res.status(201).json({ success: true, data: result.rows[0] });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Get activities/notes for a lead.
+ * GET /api/v1/crm/leads/:id/activities
+ */
+export async function getLeadActivities(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { id } = req.params;
+    const tenantId = req.tenantId!;
+
+    // Verify lead exists
+    const leadCheck = await query(
+      'SELECT id FROM leads WHERE id = $1 AND tenant_id = $2',
+      [id, tenantId]
+    );
+    if (leadCheck.rows.length === 0) {
+      throw new NotFoundError('Lead', id);
+    }
+
+    const result = await query(
+      `SELECT la.*, u.full_name as user_name, u.avatar_url as user_avatar
+       FROM lead_activities la
+       LEFT JOIN users u ON u.id = la.user_id
+       WHERE la.lead_id = $1
+       ORDER BY la.created_at DESC
+       LIMIT 50`,
+      [id]
+    );
+
+    res.json({ success: true, data: result.rows });
+  } catch (error) {
+    next(error);
+  }
+}

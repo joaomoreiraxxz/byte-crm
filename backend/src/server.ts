@@ -48,7 +48,7 @@ async function bootstrap(): Promise<void> {
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: [
       'Content-Type', 'Authorization', 'X-CSRF-Token',
-      'X-Vault-Session', 'X-Request-ID',
+      'X-Vault-Session', 'X-Request-ID', 'X-Workspace-Id',
     ],
     exposedHeaders: [
       'X-RateLimit-Limit', 'X-RateLimit-Remaining',

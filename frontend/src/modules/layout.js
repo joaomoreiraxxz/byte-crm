@@ -1,4 +1,4 @@
-import { getState, setState } from '../lib/store.js';
+import { getState, setState, resetState } from '../lib/store.js';
 import icon from '../lib/icons.js';
 import { getUnreadCount, toggleNotificationPanel } from '../lib/notifications.js';
 
@@ -7,14 +7,18 @@ export let activeTabId = null;
 
 const NAV_SECTIONS = [
   {
+    id: 'empresa',
     label: 'Empresa',
+    collapsible: false,
     items: [
-      { id: 'dashboard', route: '/dashboard', icon: 'dashboard', label: 'Dashboard Corporativo' },
+      { id: 'dashboard', route: '/dashboard', icon: 'dashboard', label: 'Dashboard' },
       { id: 'workspaces', route: '/workspaces', icon: 'team', label: 'Workspaces' },
     ],
   },
   {
+    id: 'workspace',
     label: 'Workspace Atual',
+    collapsible: true,
     items: [
       { id: 'pipeline', route: '/pipeline', icon: 'pipeline', label: 'Funil de Vendas' },
       { id: 'contacts', route: '/contacts', icon: 'contacts', label: 'Contatos' },
@@ -25,21 +29,9 @@ const NAV_SECTIONS = [
     ],
   },
   {
-    label: 'CRM & Produtos',
-    items: [
-      { id: 'products', route: '/crm/products', icon: 'products', label: 'Produtos' },
-    ],
-  },
-  {
-    label: 'Produtividade',
-    items: [
-      { id: 'calendar', route: '/calendar', icon: 'calendar', label: 'Agenda' },
-      { id: 'tasks', route: '/tasks', icon: 'check', label: 'Tarefas' },
-      { id: 'notes', route: '/notes', icon: 'edit', label: 'Notas' },
-    ],
-  },
-  {
+    id: 'financeiro',
     label: 'Financeiro',
+    collapsible: true,
     items: [
       { id: 'contas-pagar', route: '/erp/contas-pagar', icon: 'moneyOut', label: 'Contas a Pagar' },
       { id: 'contas-receber', route: '/erp/contas-receber', icon: 'moneyIn', label: 'Contas a Receber' },
@@ -48,7 +40,9 @@ const NAV_SECTIONS = [
     ],
   },
   {
+    id: 'seguranca',
     label: 'Segurança & DevOps',
+    collapsible: true,
     items: [
       { id: 'vault', route: '/vault', icon: 'vault', label: 'Cofre' },
       { id: 'audit', route: '/audit', icon: 'shield', label: 'Auditoria' },
@@ -56,7 +50,9 @@ const NAV_SECTIONS = [
     ],
   },
   {
+    id: 'sistema',
     label: 'Sistema',
+    collapsible: true,
     items: [
       { id: 'team', route: '/team', icon: 'team', label: 'Equipe' },
       { id: 'settings', route: '/settings', icon: 'settings', label: 'Configurações' },
@@ -65,27 +61,37 @@ const NAV_SECTIONS = [
 ];
 
 export function initLayout() {
-  if (document.getElementById('app-layout')) return;
+  // Always allow re-init on navigation (fixes stale layout after logout/login)
+  const existing = document.getElementById('app-layout');
+  if (existing) return;
 
   const collapsed = getState('sidebarCollapsed');
+  const sectionStates = getState('sidebarSections') || {};
   
-  const navHTML = NAV_SECTIONS.map((section) => `
-    <div class="sidebar__section">
-      <div class="sidebar__section-label">${section.label}</div>
-      ${section.items.map((item) => `
-        <a class="sidebar__link" data-id="${item.id}" data-title="${item.label}" data-icon="${item.icon}" data-route="${item.route}">
-          ${icon(item.icon, 20)}
-          <span class="sidebar__link-text">${item.label}</span>
-        </a>
-      `).join('')}
+  const navHTML = NAV_SECTIONS.map((section) => {
+    const isCollapsed = section.collapsible && sectionStates[section.id] === false;
+    return `
+    <div class="sidebar__section ${isCollapsed ? 'sidebar__section--collapsed' : ''}" data-section-id="${section.id}">
+      <div class="sidebar__section-label ${section.collapsible ? 'sidebar__section-label--clickable' : ''}" ${section.collapsible ? `data-toggle-section="${section.id}"` : ''}>
+        <span>${section.label}</span>
+        ${section.collapsible ? `<span class="sidebar__section-chevron">${icon('chevronDown', 12)}</span>` : ''}
+      </div>
+      <div class="sidebar__section-items">
+        ${section.items.map((item) => `
+          <a class="sidebar__link" data-id="${item.id}" data-title="${item.label}" data-icon="${item.icon}" data-route="${item.route}">
+            ${icon(item.icon, 20)}
+            <span class="sidebar__link-text">${item.label}</span>
+          </a>
+        `).join('')}
+      </div>
     </div>
-  `).join('');
+  `}).join('');
 
   document.getElementById('app').innerHTML = `
     <div class="app-layout" id="app-layout">
       <aside class="sidebar ${collapsed ? 'collapsed' : ''}" id="sidebar">
         <div class="sidebar__brand">
-          <img src="/favicon.svg" alt="Logo" style="width: 32px; height: 32px;" />
+          <img src="/logo.png" alt="Logo" style="width: 48px; height: 48px; object-fit: contain; border-radius: 12px;" />
           <span class="sidebar__brand-text">CRM BYTE</span>
         </div>
         <nav class="sidebar__nav" id="sidebar-nav">${navHTML}</nav>
@@ -105,6 +111,7 @@ export function initLayout() {
   `;
   
   bindSidebar();
+  bindAccordion();
 }
 
 function renderTopbar() {
@@ -147,11 +154,29 @@ function bindSidebar() {
     setState('sidebarCollapsed', newState);
     document.getElementById('sidebar')?.classList.toggle('collapsed', newState);
     document.getElementById('app-main')?.classList.toggle('sidebar-collapsed', newState);
+    document.getElementById('topbar')?.classList.toggle('sidebar-collapsed', newState);
   });
 
   document.getElementById('notifications-btn')?.addEventListener('click', (e) => {
     e.stopPropagation();
     toggleNotificationPanel();
+  });
+}
+
+function bindAccordion() {
+  document.querySelectorAll('[data-toggle-section]').forEach(label => {
+    label.addEventListener('click', () => {
+      const sectionId = label.dataset.toggleSection;
+      const sectionEl = document.querySelector(`[data-section-id="${sectionId}"]`);
+      if (!sectionEl) return;
+
+      const isCollapsed = sectionEl.classList.toggle('sidebar__section--collapsed');
+
+      // Persist state
+      const states = getState('sidebarSections') || {};
+      states[sectionId] = !isCollapsed;
+      setState('sidebarSections', states);
+    });
   });
 }
 
@@ -288,9 +313,16 @@ export function bindSidebarNav(routeMap) {
       const { disconnectWebSocket } = await import('../lib/websocket.js');
       const { navigate } = await import('../lib/router.js');
       
-      await api.auth.logout();
+      try { await api.auth.logout(); } catch (_) { /* ignore API error on logout */ }
       clearTokens();
       disconnectWebSocket();
+      resetState();
+      // Clear tabs state
+      openedTabs.length = 0;
+      activeTabId = null;
+      // Remove the layout so it re-inits on next login
+      const layout = document.getElementById('app-layout');
+      if (layout) layout.remove();
       navigate('/login');
     } catch (e) {
       console.error('Logout error', e);

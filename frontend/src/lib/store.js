@@ -7,6 +7,8 @@ const state = {
   user: null,
   tenant: null,
   sidebarCollapsed: false,
+  sidebarSections: {},
+  activeWorkspace: null,
   vaultSession: null,
   activeLeadId: null,
   activePipelineId: null,
@@ -61,6 +63,10 @@ export function getSnapshot() {
 export function resetState() {
   state.user = null;
   state.tenant = null;
+  state.activeWorkspace = null;
+  state.activePipelineId = null;
+  state.sidebarSections = {};
+  state.sidebarCollapsed = false;
   state.vaultSession = null;
   state.activeLeadId = null;
   state.notifications = [];

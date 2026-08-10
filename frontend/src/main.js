@@ -33,7 +33,6 @@ const routeMap = {
   'audit': renderAudit,
   'terminal': renderTerminal,
   'team': renderTeam,
-  'calendar': (pane) => { pane.innerHTML = '<div style="padding:48px; text-align:center;">Agenda em construção...</div>'; },
   'settings': renderSettings,
 };
 
@@ -42,9 +41,12 @@ function handleDashboardEntry() {
   initLayout();
   bindSidebarNav(routeMap);
   
-  // Default tab when logging in
-  import('./modules/layout.js').then(({ openTab }) => {
-    openTab('workspaces', 'Workspaces', 'team', renderWorkspaces);
+  // Default tab when entering dashboard
+  import('./modules/layout.js').then(({ openTab, openedTabs }) => {
+    // Only open default if no tabs already open
+    if (openedTabs.length === 0) {
+      openTab('workspaces', 'Workspaces', 'team', renderWorkspaces);
+    }
   });
 }
 

@@ -341,6 +341,88 @@ export async function getMe(req: Request, res: Response, next: NextFunction): Pr
   }
 }
 
+/**
+ * Update current user profile.
+ * PUT /api/v1/auth/me
+ */
+export async function updateProfile(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { fullName, phone, avatarUrl } = req.body;
+
+    if (!fullName) {
+      throw new ValidationError('fullName is required');
+    }
+
+    const result = await query(
+      `UPDATE users SET full_name = $1, phone = $2, avatar_url = $3
+       WHERE id = $4
+       RETURNING id, email, full_name, phone, avatar_url, role`,
+      [fullName, phone || null, avatarUrl || null, req.userId]
+    );
+
+    if (result.rows.length === 0) {
+      throw new AuthenticationError('User not found');
+    }
+
+    const user = result.rows[0];
+    res.json({
+      success: true,
+      data: {
+        id: user.id,
+        email: user.email,
+        fullName: user.full_name,
+        phone: user.phone,
+        avatarUrl: user.avatar_url,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+/**
+ * Change current user password.
+ * PUT /api/v1/auth/me/password
+ */
+export async function changePassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      throw new ValidationError('currentPassword and newPassword are required');
+    }
+
+    if (newPassword.length < 8) {
+      throw new ValidationError('New password must be at least 8 characters');
+    }
+
+    const userResult = await query(
+      'SELECT password_hash FROM users WHERE id = $1',
+      [req.userId]
+    );
+
+    if (userResult.rows.length === 0) {
+      throw new AuthenticationError('User not found');
+    }
+
+    const valid = await bcrypt.compare(currentPassword, userResult.rows[0].password_hash);
+    if (!valid) {
+      throw new AuthenticationError('Current password is incorrect');
+    }
+
+    const newHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+    await query(
+      'UPDATE users SET password_hash = $1 WHERE id = $2',
+      [newHash, req.userId]
+    );
+
+    res.json({ success: true, message: 'Password changed successfully' });
+  } catch (error) {
+    next(error);
+  }
+}
+
 // ─── Token Generation ─────────────────────────────────────────
 
 function generateTokens(user: {

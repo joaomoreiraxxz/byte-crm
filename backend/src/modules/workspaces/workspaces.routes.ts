@@ -1,16 +1,17 @@
 import { Router } from 'express';
 import { authGuard as requireAuth } from '../../middleware/authGuard.js';
-import { listWorkspaces, createWorkspace, getWorkspace } from './workspaces.controller.js';
+import { listWorkspaces, createWorkspace, getWorkspace, getWorkspacePipelines } from './workspaces.controller.js';
 
 import { listTasks, createTask, listNotes, createNote, listEvents, createEvent } from './productivity.controller.js';
 
 const router = Router();
 
-router.use(requireAuth);
+router.use(requireAuth());
 
 router.get('/', listWorkspaces);
 router.post('/', createWorkspace);
 router.get('/:id', getWorkspace);
+router.get('/:id/pipelines', getWorkspacePipelines);
 
 // Productivity
 router.get('/:id/tasks', listTasks);

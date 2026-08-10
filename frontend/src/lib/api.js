@@ -165,18 +165,30 @@ export const api = {
     register: (data) => request('POST', '/auth/register', data),
     logout: () => request('POST', '/auth/logout'),
     me: () => request('GET', '/auth/me'),
+    updateProfile: (data) => request('PUT', '/auth/me', data),
+    changePassword: (data) => request('PUT', '/auth/me/password', data),
+  },
+
+  // Workspaces shortcuts
+  workspaces: {
+    list: () => request('GET', '/workspaces'),
+    create: (data) => request('POST', '/workspaces', data),
+    get: (id) => request('GET', `/workspaces/${id}`),
+    getPipelines: (workspaceId) => request('GET', `/workspaces/${workspaceId}/pipelines`),
   },
 
   // CRM shortcuts
   crm: {
     getKanban: (pipelineId) => request('GET', `/crm/leads/kanban/${pipelineId}`),
-    getLeads: (params) => request('GET', `/crm/leads?${new URLSearchParams(params)}`),
+    getLeads: (params) => request('GET', `/crm/leads${params ? '?' + new URLSearchParams(params) : ''}`),
     getLead: (id) => request('GET', `/crm/leads/${id}`),
     createLead: (data) => request('POST', '/crm/leads', data),
     updateLead: (id, data) => request('PUT', `/crm/leads/${id}`, data),
     moveLead: (id, stageId, position) =>
       request('PATCH', `/crm/leads/${id}/move`, { stageId, position }),
     deleteLead: (id) => request('DELETE', `/crm/leads/${id}`),
+    addLeadNote: (leadId, data) => request('POST', `/crm/leads/${leadId}/notes`, data),
+    getLeadActivities: (leadId) => request('GET', `/crm/leads/${leadId}/activities`),
   },
 
   // WhatsApp shortcuts

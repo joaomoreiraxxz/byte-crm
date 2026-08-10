@@ -2,7 +2,7 @@
    CRM BYTE — Page Styles v2 (All Modules)
    ═══════════════════════════════════════════════════════════════ */
 
-/* ─── Login — Minimalist ─────────────────────────────────────── */
+/* ─── Login — Premium Animated ───────────────────────────────── */
 .login-page {
   width: 100%;
   flex: 1;
@@ -11,28 +11,78 @@
   align-items: center;
   justify-content: center;
   background-color: #0C102A;
-  background-image: url('/waves-bg.svg');
+  background-image: 
+    radial-gradient(ellipse at 20% 50%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(139, 92, 246, 0.06) 0%, transparent 50%);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Animated gradient orbs */
+.login-page::before,
+.login-page::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.4;
+  animation: loginOrb 8s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.login-page::before {
+  width: 400px;
+  height: 400px;
+  background: rgba(56, 189, 248, 0.15);
+  top: -100px;
+  right: -100px;
+  animation-delay: 0s;
+}
+
+.login-page::after {
+  width: 350px;
+  height: 350px;
+  background: rgba(139, 92, 246, 0.12);
+  bottom: -80px;
+  left: -80px;
+  animation-delay: -4s;
+}
+
+@keyframes loginOrb {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, -20px) scale(1.1); }
+  100% { transform: translate(-20px, 10px) scale(0.95); }
 }
 
 .login-container {
   width: 100%;
   max-width: 760px;
   padding: 24px;
+  position: relative;
+  z-index: 1;
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .login-card {
   width: 100%;
-  background: rgba(14, 18, 45, 0.45);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+  background: rgba(14, 18, 45, 0.55);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 24px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255,255,255,0.03) inset;
   display: flex;
   overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 32px 72px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255,255,255,0.05) inset;
 }
 
 .login-card__left {
@@ -448,7 +498,24 @@ img.login-card__brand-icon {
   gap: var(--sp-4);
 }
 
-.contact-card { padding: var(--sp-5); text-align: center; }
+.contact-card {
+  padding: var(--sp-5);
+  text-align: center;
+  transition: all var(--dur-base) var(--ease-out);
+  cursor: pointer;
+}
+.contact-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(56, 189, 248, 0.15);
+}
+
+.workspace-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 8px 32px rgba(56, 189, 248, 0.12) !important;
+  border-color: rgba(56, 189, 248, 0.2) !important;
+}
+
 .contact-card__avatar { margin: 0 auto var(--sp-3); }
 .contact-card__name { font-size: var(--fs-md); font-weight: var(--fw-semibold); margin-bottom: 2px; }
 .contact-card__role { font-size: var(--fs-xs); color: var(--color-text-tertiary); margin-bottom: var(--sp-3); }

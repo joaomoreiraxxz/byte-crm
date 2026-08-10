@@ -65,6 +65,8 @@
 
 .btn:disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
 
+.btn--primary:focus-visible { box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3); }
+
 .btn .icon { flex-shrink: 0; }
 
 /* ─── Inputs ─────────────────────────────────────────────────── */
@@ -322,7 +324,7 @@
 
 .tab-pane {
   display: none;
-  animation: fadeIn var(--dur-base) var(--ease-out);
+  animation: fadeInUp var(--dur-base) var(--ease-out) both;
 }
 .tab-pane.active {
   display: block;
@@ -371,7 +373,7 @@
 }
 .kanban-card:active { cursor: grabbing; }
 .kanban-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
-.kanban-card.sortable-ghost { opacity: 0.3; border: 2px dashed var(--color-accent); }
+.kanban-card.sortable-ghost { opacity: 0.3; border: 2px dashed var(--color-accent); transform: rotate(2deg) scale(0.95); }
 
 .kanban-card__name { font-size: var(--fs-sm); font-weight: var(--fw-medium); }
 .kanban-card__company { font-size: var(--fs-xs); color: var(--color-text-tertiary); margin-top: 2px; }
@@ -485,6 +487,41 @@
 }
 .sidebar.collapsed .sidebar__section-label { opacity: 0; height: 0; padding: 0; margin: 0; }
 
+/* ─── Sidebar Accordion ─────────────────────────────────────── */
+.sidebar__section-label--clickable {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  border-radius: var(--radius-sm);
+  transition: background var(--dur-fast);
+}
+.sidebar__section-label--clickable:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+.sidebar__section-chevron {
+  display: inline-flex;
+  transition: transform var(--dur-base) var(--ease-out);
+  color: rgba(255,255,255,0.3);
+}
+.sidebar__section--collapsed .sidebar__section-chevron {
+  transform: rotate(-90deg);
+}
+
+.sidebar__section-items {
+  max-height: 500px;
+  overflow: hidden;
+  transition: max-height var(--dur-slow) var(--ease-out), opacity var(--dur-base) var(--ease-out);
+  opacity: 1;
+}
+.sidebar__section--collapsed .sidebar__section-items {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .sidebar__link {
   display: flex;
   align-items: center;
@@ -556,6 +593,9 @@
 }
 .topbar.sidebar-collapsed { left: var(--sidebar-collapsed); }
 
+/* Sidebar collapsed topbar sync */
+.sidebar-collapsed + .app-main .topbar { left: var(--sidebar-collapsed); }
+
 .topbar__left { display: flex; align-items: center; gap: var(--sp-4); }
 
 .topbar__toggle { padding: var(--sp-2); border-radius: var(--radius-md); color: var(--color-text-secondary); transition: all var(--dur-fast); }
@@ -563,7 +603,7 @@
 
 .topbar__search { position: relative; width: 280px; }
 .topbar__search .input { padding-left: 36px; background: var(--color-bg-secondary); border-color: transparent; border-radius: var(--radius-lg); }
-.topbar__search .input:focus { background: white; border-color: var(--color-border-focus); }
+.topbar__search .input:focus { background: var(--color-bg-tertiary); border-color: var(--color-border-focus); }
 .topbar__search > .icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--color-text-muted); pointer-events: none; }
 
 .topbar__right { display: flex; align-items: center; gap: var(--sp-2); }
