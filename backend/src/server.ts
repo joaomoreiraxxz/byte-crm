@@ -118,35 +118,70 @@ async function bootstrap(): Promise<void> {
       const fs = await import('fs');
       const path = await import('path');
       const migrationsDir = path.join(process.cwd(), 'migrations');
+      const { pool } = await import('./config/database.js');
+      
       if (fs.existsSync(migrationsDir)) {
-        const check = await (await import('./config/database.js')).pool.query("SELECT to_regclass('public.tenants') as exists");
+        const check = await pool.query("SELECT to_regclass('public.tenants') as exists");
         if (!check.rows[0].exists) {
-          console.log('Running automatic database migrations...');
-          const files = fs.readdirSync(migrationsDir).filter(f => f.endsWith('.sql')).sort();
+          console.log('🔄 Running automatic database migrations...');
+          const files = fs.readdirSync(migrationsDir).filter((f: string) => f.endsWith('.sql')).sort();
           for (const file of files) {
-            console.log(`Executing ${file}...`);
+            console.log(`  Executing ${file}...`);
             const sql = fs.readFileSync(path.join(migrationsDir, file), 'utf8');
-            await (await import('./config/database.js')).pool.query(sql);
+            await pool.query(sql);
+            console.log(`  ✓ ${file}`);
           }
-          console.log('All migrations completed successfully!');
+          console.log('✅ All migrations completed successfully!');
+        } else {
+          console.log('✓ Database tables already exist, skipping migrations.');
         }
       }
       
-      // Auto-seed admin user if empty
-      const usersCheck = await (await import('./config/database.js')).pool.query("SELECT COUNT(*) as count FROM users");
+      // Auto-seed admin user if no users exist
+      const usersCheck = await pool.query("SELECT COUNT(*) as count FROM users");
       if (parseInt(usersCheck.rows[0].count) === 0) {
-        console.log('Seeding initial admin user...');
+        console.log('🌱 Seeding initial data...');
         const bcrypt = await import('bcrypt');
-        const hash = await bcrypt.default.hash('SenhaSegura123!', 10);
-        const tRes = await (await import('./config/database.js')).pool.query("INSERT INTO tenants (name, slug, max_users, plan) VALUES ('Byte Force', 'byte-force', 50, 'enterprise') RETURNING id");
-        await (await import('./config/database.js')).pool.query(
-          "INSERT INTO users (tenant_id, email, password_hash, full_name, role) VALUES ($1, $2, $3, $4, 'owner')",
-          [tRes.rows[0].id, 'moreiraxxz10@gmail.com', hash, 'Administrador']
+        const adminPasswordHash = await bcrypt.default.hash('ByteCRM@2026!', 12);
+        
+        // Create tenant
+        const tRes = await pool.query(
+          "INSERT INTO tenants (name, slug, max_users, plan) VALUES ('Byte CRM', 'byte-crm', 100, 'enterprise') ON CONFLICT (slug) DO UPDATE SET name = 'Byte CRM' RETURNING id"
         );
-        console.log('Initial admin user created successfully! (byte-force / moreiraxxz10@gmail.com)');
+        const tenantId = tRes.rows[0].id;
+        
+        // Create admin user
+        const uRes = await pool.query(
+          "INSERT INTO users (tenant_id, email, password_hash, full_name, role) VALUES ($1, $2, $3, $4, 'owner') RETURNING id",
+          [tenantId, 'admin@bytecrm.online', adminPasswordHash, 'Administrador']
+        );
+        const userId = uRes.rows[0].id;
+        
+        // Create workspace
+        const wRes = await pool.query(
+          "INSERT INTO workspaces (tenant_id, name, description) VALUES ($1, 'Principal', 'Workspace padrão do sistema') RETURNING id",
+          [tenantId]
+        );
+        const workspaceId = wRes.rows[0].id;
+        
+        // Add admin to workspace
+        await pool.query(
+          "INSERT INTO workspace_members (workspace_id, user_id, role) VALUES ($1, $2, 'owner')",
+          [workspaceId, userId]
+        );
+        
+        // Create default pipeline
+        await pool.query(
+          "INSERT INTO pipelines (tenant_id, workspace_id, name, is_default) VALUES ($1, $2, 'Vendas', true)",
+          [tenantId, workspaceId]
+        );
+        
+        console.log('✅ Seed complete!');
+        console.log('   📧 Email: admin@bytecrm.online');
+        console.log('   🔑 Senha: ByteCRM@2026!');
       }
     } catch (e: any) {
-      console.error('Auto-migration failed:', e.message);
+      console.error('Auto-migration/seed failed:', e.message);
     }
   }
 
