@@ -122,3 +122,21 @@ Este documento registra as alterações e implementações feitas no projeto, co
   - `frontend/src/styles/pages.css` (login animated + card hovers)
 
 - Código novo: ERP module completo com modais e tabelas. Toast system com SVG icons inline. Login page com animated gradient orbs. Hover effects premium nos cards.
+
+## Preparação para Deploy — EasyPanel/Hostinger (2026-08-09)
+- O que foi feito:
+  1. Código commitado e pushado para GitHub (`joaomoreiraxxz/byte-crm`)
+  2. Criado `.env.example` com template de todas as variáveis necessárias
+  3. `.gitignore` melhorado (secrets, IDE, OS, SSL, Docker volumes)
+  4. Gerados todos os secrets de produção (JWT, AES, CSRF, Vault, Redis, PostgreSQL)
+  5. Secrets salvos em `.env.production` (local, não vai pro Git)
+  6. Criado `backend/src/database/seed.sql` — script SQL para criar tenant, admin user, workspace e pipeline iniciais
+  7. Senha admin: `ByteCRM@2026!` (bcrypt hash incluído no seed.sql)
+
+- Arquivos mudados:
+  - `.env.example` (novo — template de variáveis)
+  - `.env.production` (novo — secrets reais, gitignored)
+  - `.gitignore` (melhorado com cobertura completa)
+  - `backend/src/database/seed.sql` (novo — inicialização do banco)
+
+- Código novo: Template de deploy, secrets criptográficos gerados, seed SQL com tenant+admin+workspace+pipeline.
